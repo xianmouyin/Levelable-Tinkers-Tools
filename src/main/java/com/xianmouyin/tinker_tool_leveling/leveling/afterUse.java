@@ -1,20 +1,21 @@
 package com.xianmouyin.tinker_tool_leveling.leveling;
 
 import com.xianmouyin.tinker_tool_leveling.config.Config;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import slimeknights.tconstruct.library.tools.item.ModifiableArmorItem;
 
 import static com.xianmouyin.tinker_tool_leveling.leveling.addNBT.initTag;
 
 public class afterUse {
-    public static void addExp(ItemStack tool, Integer xp, PlayerEntity player) {
+    public static void addExp(ItemStack tool, Integer xp, Player player) {
         if (tool.hasTag()) {
-            CompoundNBT nbt = tool.getTag();
-            if (nbt.keySet().contains("experience") && nbt.keySet().contains("level") && nbt.keySet().contains("expCap")) {
+            CompoundTag nbt = tool.getTag();
+            if (nbt.getAllKeys().contains("experience") && nbt.getAllKeys().contains("level") && nbt.getAllKeys().contains("expCap")) {
                 int exp = nbt.getInt("experience");
                 int cap = nbt.getInt("expCap");
                 exp += xp;
@@ -28,14 +29,14 @@ public class afterUse {
         }
     }
 
-    public static CompoundNBT levelUp(ItemStack stack, PlayerEntity player) {
-        CompoundNBT nbt = stack.getTag();
+    public static CompoundTag levelUp(ItemStack stack, Player player) {
+        CompoundTag nbt = stack.getTag();
         int cap = nbt.getInt("expCap");
         int lvl = nbt.getInt("level");
         lvl++;
         if (lvl <= 3) cap *= 2;
         else cap += Config.INIT_EXPCAP.get() * 2;
-        CompoundNBT slots = nbt.getCompound("tic_persistent_data");
+        CompoundTag slots = nbt.getCompound("tic_persistent_data");
         slots.putInt("upgrades", slots.getInt("upgrades") + 1);
         int abilityLvl = Config.ABILITY_LEVEL.get();
         int defenseLvl = Config.DEFENSE_LEVEL.get();
@@ -45,12 +46,13 @@ public class afterUse {
         nbt.putInt("level", lvl);
         nbt.putInt("expCap", cap);
 
-        player.sendMessage(getLevelUpMsg(stack, lvl), player.getUniqueID());
+        player.sendMessage(getLevelUpMsg(stack, lvl), player.getUUID());
         return nbt;
     }
 
-    public static ITextComponent getLevelUpMsg(ItemStack stack, int lvl) {
-        String name = stack.getDisplayName().getString();
-        return new TranslationTextComponent("msg.tinker_tool_leveling.leverUp.1").appendString(name).appendSibling(new TranslationTextComponent("msg.tinker_tool_leveling.leverUp.2").appendString(lvl + "").appendSibling(new TranslationTextComponent("msg.tinker_tool_leveling.leverUp.3")));
+    public static MutableComponent getLevelUpMsg(ItemStack stack, int lvl) {
+        Component name = stack.getItem().getName(stack);
+        MutableComponent text = new TranslatableComponent("msg.tinker_tool_leveling.leverUp.1").append(name).append(new TranslatableComponent("msg.tinker_tool_leveling.leverUp.2").append(lvl + "").append(new TranslatableComponent("msg.tinker_tool_leveling.leverUp.3")));
+        return text;
     }
 }

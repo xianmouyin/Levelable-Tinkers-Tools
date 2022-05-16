@@ -1,7 +1,7 @@
 package com.xianmouyin.tinker_tool_leveling.leveling;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -16,16 +16,16 @@ public class addLore{
     @SubscribeEvent
     public static void RenderLore(ItemTooltipEvent event) {
         if(event.getItemStack().hasTag()){
-            CompoundNBT nbt = event.getItemStack().getTag();
-            if (nbt.keySet().contains("experience") && nbt.keySet().contains("level") && nbt.keySet().contains("expCap")) {
+            CompoundTag nbt = event.getItemStack().getTag();
+            if (nbt.getAllKeys().contains("experience") && nbt.getAllKeys().contains("level") && nbt.getAllKeys().contains("expCap")) {
                 Integer exp = nbt.getInt("experience");
                 Integer lvl = nbt.getInt("level");
                 int expCap = nbt.getInt("expCap");
 
                 List lore = event.getToolTip();
 
-                lore.add(new TranslationTextComponent("tooltip.tinker_tool_leveling.exp").appendString(exp + "/" + expCap));
-                lore.add(new TranslationTextComponent("tooltip.tinker_tool_leveling.lvl").appendString(lvl + ""));
+                lore.add(new TranslatableComponent("tooltip.tinker_tool_leveling.exp").append(exp + "/" + expCap));
+                lore.add(new TranslatableComponent("tooltip.tinker_tool_leveling.lvl").append(lvl + ""));
             }
         }
     }

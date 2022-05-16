@@ -1,29 +1,35 @@
 buildscript {
     repositories {
+
         maven { url = 'https://maven.minecraftforge.net' }
+        maven { url = 'https://maven.parchmentmc.org' }
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.7', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath 'org.parchmentmc:librarian:1.+'
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
+apply plugin: 'org.parchmentmc.librarian.forgegradle'
 
 version = '1.0.0'
 group = 'com.xianmouyin.tinker_tool_leveling'
 archivesBaseName = 'tinker_tool_leveling-' + minecraft_version
-
-java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
-    mappings channel: 'snapshot', version: '20210309-1.16.5'
+    mappings channel: 'parchment', version: parchment_version + '-' + minecraft_version
+
     runs {
         client {
             workingDirectory project.file('run')
+
             property 'forge.logging.markers', 'REGISTRIES'
+
             property 'forge.logging.console.level', 'debug'
 
             mods {
@@ -35,7 +41,9 @@ minecraft {
 
         server {
             workingDirectory project.file('run')
+
             property 'forge.logging.markers', 'REGISTRIES'
+
             property 'forge.logging.console.level', 'debug'
 
             mods {
@@ -47,7 +55,9 @@ minecraft {
 
         data {
             workingDirectory project.file('run')
+
             property 'forge.logging.markers', 'REGISTRIES'
+
             property 'forge.logging.console.level', 'debug'
 
             args '--mod', 'tinker_tool_leveling', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
@@ -61,12 +71,13 @@ minecraft {
     }
 }
 
+
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
     maven {
         name 'DVS1 Maven FS'
-        url 'http://dvs1.progwml6.com/files/maven'
+        url 'https://dvs1.progwml6.com/files/maven'
     }
 }
 
@@ -77,12 +88,4 @@ dependencies {
     implementation fg.deobf("slimeknights.tconstruct:TConstruct:${minecraft_version}-${tic_version}")
 }
 
-
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact jar
-        }
-    }
-}
+jar.finalizedBy('reobfJar')

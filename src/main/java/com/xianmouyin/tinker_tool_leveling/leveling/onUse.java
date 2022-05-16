@@ -1,13 +1,13 @@
 package com.xianmouyin.tinker_tool_leveling.leveling;
 
-import net.minecraft.block.AbstractFireBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.BaseFireBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -15,8 +15,9 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import slimeknights.tconstruct.library.events.TinkerToolEvent;
 import slimeknights.tconstruct.library.tools.item.ModifiableArmorItem;
-import slimeknights.tconstruct.library.tools.item.ToolItem;
-import slimeknights.tconstruct.tools.item.small.SwordTool;
+import slimeknights.tconstruct.library.tools.item.ModifiableItem;
+import slimeknights.tconstruct.library.tools.nbt.ToolStack;
+import slimeknights.tconstruct.tools.item.ModifiableSwordItem;
 
 import java.util.Iterator;
 
@@ -28,10 +29,10 @@ public class onUse {
     @SubscribeEvent
     public static void OnToolUse(BlockEvent.BreakEvent event) {
         if (num%2 == 0) {
-            ItemStack tool = event.getPlayer().getHeldItemMainhand();
-            if (tool.getItem() instanceof ToolItem) {
+            ItemStack tool = event.getPlayer().getMainHandItem();
+            if (tool.getItem() instanceof ModifiableItem) {
                 BlockState block = event.getState();
-                if(tool.canHarvestBlock(block)) {
+                if(((ModifiableItem) tool.getItem()).getToolDefinition().getData().getHarvestLogic().isEffective(ToolStack.from(tool),block)) {
                     addExp(tool,1, event.getPlayer());
                 }
             }
@@ -42,7 +43,7 @@ public class onUse {
     @SubscribeEvent
     public static void onHarvest(TinkerToolEvent.ToolHarvestEvent event) {
         ItemStack tool = event.getStack();
-        if (tool.getItem() instanceof ToolItem) {
+        if (tool.getItem() instanceof ModifiableItem) {
             addExp(tool,1,event.getPlayer());
         }
     }
@@ -50,21 +51,21 @@ public class onUse {
     @SubscribeEvent
     public static void onShear(TinkerToolEvent.ToolShearEvent event) {
         ItemStack tool = event.getStack();
-        if (tool.getItem() instanceof ToolItem) {
+        if (tool.getItem() instanceof ModifiableItem) {
             addExp(tool,1,event.getPlayer());
         }
     }
 
     @SubscribeEvent
     public static void onLight(PlayerInteractEvent.RightClickBlock event) {
-        if (event.getWorld() instanceof ServerWorld && AbstractFireBlock.canLightBlock(event.getWorld(), event.getPos().offset(event.getFace()), event.getFace())) {
+        if (event.getWorld() instanceof ServerLevel && BaseFireBlock.canBePlacedAt(event.getWorld(), event.getPos().relative(event.getFace()), event.getFace())) {
             ItemStack tool = event.getItemStack();
-            if (tool.hasTag() && tool.getTag().keySet().contains("tic_modifiers")) {
-                ListNBT modifiers = (ListNBT) tool.getTag().get("tic_modifiers");
+            if (tool.hasTag() && tool.getTag().getAllKeys().contains("tic_modifiers")) {
+                ListTag modifiers = (ListTag) tool.getTag().get("tic_modifiers");
                 if (modifiers != null) {
-                    for (INBT index : modifiers) {
-                        CompoundNBT tag = (CompoundNBT) index;
-                        if (tag.keySet().contains("name")) {
+                    for (Tag index : modifiers) {
+                        CompoundTag tag = (CompoundTag) index;
+                        if (tag.getAllKeys().contains("name")) {
                             if (tag.getString("name").equals("tconstruct:fiery") || tag.getString("name").equals("tconstruct:firestarter")) {
                                 addExp(tool, 1, event.getPlayer());
                                 break;
@@ -78,10 +79,9 @@ public class onUse {
 
     @SubscribeEvent
     public static void OnWeaponUse(LivingHurtEvent event) {
-        if (event.getSource().getTrueSource() instanceof PlayerEntity) {
-            PlayerEntity player = (PlayerEntity) event.getSource().getTrueSource();
-            ItemStack tool = player.getHeldItemMainhand();
-            if (tool.getItem() instanceof SwordTool) {
+        if (event.getEntity().getLevel() instanceof ServerLevel && event.getEntity() instanceof Player player) {
+            ItemStack tool = player.getMainHandItem();
+            if (tool.getItem() instanceof ModifiableSwordItem) {
                 int damage = (int) Math.ceil(event.getAmount()/2);
                 addExp(tool,damage, player);
             }
@@ -90,21 +90,21 @@ public class onUse {
 
     @SubscribeEvent
     public static void OnArmorUse(LivingHurtEvent event) {
-        if (event.getEntity() instanceof PlayerEntity) {
-            Iterator<ItemStack> armors = event.getEntity().getEquipmentAndArmor().iterator();
+        if (event.getEntity().getLevel() instanceof ServerLevel && event.getEntity() instanceof Player) {
+            Iterator<ItemStack> armors = event.getEntity().getArmorSlots().iterator();
             while (armors.hasNext()) {
                 ItemStack armor = armors.next();
                 if (armor.getItem() instanceof ModifiableArmorItem) {
-                    addExp(armor,1, ((PlayerEntity) event.getEntity()));
+                    addExp(armor,1, ((Player) event.getEntity()));
                 }
             }
         }
     }
 
     @SubscribeEvent
-    public static void OnToolInteract(BlockEvent.BlockToolInteractEvent event) {
+    public static void OnToolInteract(BlockEvent.BlockToolModificationEvent event) {
         ItemStack tool = event.getHeldItemStack();
-        if (tool.getItem() instanceof ToolItem) {
+        if (tool.getItem() instanceof ModifiableItem) {
             addExp(tool,1,event.getPlayer());
         }
     }
