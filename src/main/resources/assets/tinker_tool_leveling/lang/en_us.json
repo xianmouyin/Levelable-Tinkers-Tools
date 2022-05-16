@@ -1,0 +1,11 @@
+{
+  "tooltip.tinker_tool_leveling.exp": "Experience: ",
+  "tooltip.tinker_tool_leveling.lvl": "Tool Level: ",
+
+  "msg.tinker_tool_leveling.leverUp.1": "Your ",
+  "msg.tinker_tool_leveling.leverUp.2": " leveled up to level ",
+  "msg.tinker_tool_leveling.leverUp.3": "",
+  "msg.tinker_tool_leveling.error.1": "Not execute by player",
+  "msg.tinker_tool_leveling.error.2": "Please put a tinkers tool on your mainhand or use your tool once before execute this command",
+  "msg.tinker_tool_leveling.success": "Command executed successful"
+}

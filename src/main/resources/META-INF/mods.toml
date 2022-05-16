@@ -1,0 +1,30 @@
+modLoader="javafml"
+loaderVersion="[36,)"
+license="MIT"
+
+[[mods]]
+modId="tinker_tool_leveling"
+version="1.0.0"
+displayName="Tinker Tool Leveling"
+logoFile="icon.png"
+authors="xianmouyin"
+description="..."
+
+[[dependencies.tinker_tool_leveling]]
+    modId="forge"
+    mandatory=true
+    versionRange="[36,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.tinker_tool_leveling]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.16.5,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.tinker_tool_leveling]]
+    modId="tconstruct"
+    mandatory=true
+    versionRange="[3.3.3.332,)"
+    ordering="NONE"
+    side="BOTH"
