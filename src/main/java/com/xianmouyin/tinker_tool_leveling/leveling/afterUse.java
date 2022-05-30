@@ -2,8 +2,13 @@ package com.xianmouyin.tinker_tool_leveling.leveling;
 
 import com.xianmouyin.tinker_tool_leveling.config.Config;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.play.server.SPlaySoundPacket;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import slimeknights.tconstruct.library.tools.item.ModifiableArmorItem;
@@ -46,6 +51,8 @@ public class afterUse {
         nbt.putInt("expCap", cap);
 
         player.sendMessage(getLevelUpMsg(stack, lvl), player.getUniqueID());
+        ServerPlayerEntity serverPlayer = player.world.getServer().getPlayerList().getPlayerByUUID(player.getUniqueID());
+        serverPlayer.connection.sendPacket(new SPlaySoundPacket(new ResourceLocation("entity.player.levelup"), SoundCategory.PLAYERS,new Vector3d(serverPlayer.getPosX(), serverPlayer.getPosY(), serverPlayer.getPosZ()), 1.0F, 1.0F));
         return nbt;
     }
 

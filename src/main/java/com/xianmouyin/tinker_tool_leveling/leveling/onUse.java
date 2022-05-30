@@ -90,12 +90,13 @@ public class onUse {
 
     @SubscribeEvent
     public static void OnArmorUse(LivingHurtEvent event) {
-        if (event.getEntity() instanceof PlayerEntity) {
+        if (!event.getSource().isUnblockable() && event.getEntity() instanceof PlayerEntity) {
             Iterator<ItemStack> armors = event.getEntity().getEquipmentAndArmor().iterator();
             while (armors.hasNext()) {
                 ItemStack armor = armors.next();
                 if (armor.getItem() instanceof ModifiableArmorItem) {
-                    addExp(armor,1, ((PlayerEntity) event.getEntity()));
+                    int damage = (int) Math.ceil(event.getAmount()/2);
+                    addExp(armor,damage, ((PlayerEntity) event.getEntity()));
                 }
             }
         }
