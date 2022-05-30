@@ -19,8 +19,6 @@ import slimeknights.tconstruct.library.tools.item.ModifiableItem;
 import slimeknights.tconstruct.library.tools.nbt.ToolStack;
 import slimeknights.tconstruct.tools.item.ModifiableSwordItem;
 
-import java.util.Iterator;
-
 import static com.xianmouyin.tinker_tool_leveling.leveling.afterUse.addExp;
 
 @Mod.EventBusSubscriber()
@@ -79,23 +77,22 @@ public class onUse {
 
     @SubscribeEvent
     public static void OnWeaponUse(LivingHurtEvent event) {
-        if (event.getEntity().getLevel() instanceof ServerLevel && event.getEntity() instanceof Player player) {
+        if (event.getEntity().getLevel() instanceof ServerLevel && event.getSource().getEntity() instanceof Player player) {
             ItemStack tool = player.getMainHandItem();
             if (tool.getItem() instanceof ModifiableSwordItem) {
-                int damage = (int) Math.ceil(event.getAmount()/2);
-                addExp(tool,damage, player);
+                Integer xp = (int) Math.ceil(event.getAmount() / 2);
+                addExp(tool,xp, player);
             }
         }
     }
 
     @SubscribeEvent
     public static void OnArmorUse(LivingHurtEvent event) {
-        if (event.getEntity().getLevel() instanceof ServerLevel && event.getEntity() instanceof Player) {
-            Iterator<ItemStack> armors = event.getEntity().getArmorSlots().iterator();
-            while (armors.hasNext()) {
-                ItemStack armor = armors.next();
+        if (event.getEntity().getLevel() instanceof ServerLevel && !event.getSource().isBypassArmor() && event.getEntity() instanceof Player player) {
+            for (ItemStack armor : player.getArmorSlots()) {
                 if (armor.getItem() instanceof ModifiableArmorItem) {
-                    addExp(armor,1, ((Player) event.getEntity()));
+                    Integer xp = (int) Math.ceil(event.getAmount() / 2);
+                    addExp(armor, xp, player);
                 }
             }
         }

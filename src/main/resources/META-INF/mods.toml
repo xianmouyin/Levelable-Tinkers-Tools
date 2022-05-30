@@ -4,7 +4,7 @@ license="MIT"
 
 [[mods]]
 modId="tinker_tool_leveling"
-version="1.0.0"
+version="1.1.0"
 displayName="Tinker Tool Leveling"
 logoFile="icon.png"
 authors="xianmouyin"

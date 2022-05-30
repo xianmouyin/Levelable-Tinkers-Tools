@@ -28,7 +28,6 @@ public class register {
                                 .requires((commandSource -> commandSource.hasPermission(4)))
                                 .executes(context -> expUp.instance.run(context))
                 )
-
         );
     }
 }
