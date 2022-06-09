@@ -1,0 +1,11 @@
+{
+  "tooltip.levelable_tinkers_tools.exp": "经验值: ",
+  "tooltip.levelable_tinkers_tools.lvl": "工具等级: ",
+
+  "msg.levelable_tinkers_tools.leverUp.1": "你的 ",
+  "msg.levelable_tinkers_tools.leverUp.2": " 升到了 ",
+  "msg.levelable_tinkers_tools.leverUp.3": " 级",
+  "msg.levelable_tinkers_tools.error.1": "非玩家执行",
+  "msg.levelable_tinkers_tools.error.2": "请手持匠魂工具或使用一次你的工具",
+  "msg.levelable_tinkers_tools.success": "指令执行成功"
+}
