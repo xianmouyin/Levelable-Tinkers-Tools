@@ -3,26 +3,26 @@ loaderVersion="[36,)"
 license="MIT"
 
 [[mods]]
-modId="tinker_tool_leveling"
+modId="levelable_tinkers_tools"
 version="1.1.0"
-displayName="Tinker Tool Leveling"
+displayName="Levelable Tinkers Tools"
 logoFile="icon.png"
 authors="xianmouyin"
 description="..."
 
-[[dependencies.tinker_tool_leveling]]
+[[dependencies.levelable_tinkers_tools]]
     modId="forge"
     mandatory=true
     versionRange="[36,)"
     ordering="NONE"
     side="BOTH"
-[[dependencies.tinker_tool_leveling]]
+[[dependencies.levelable_tinkers_tools]]
     modId="minecraft"
     mandatory=true
     versionRange="[1.16.5,)"
     ordering="NONE"
     side="BOTH"
-[[dependencies.tinker_tool_leveling]]
+[[dependencies.levelable_tinkers_tools]]
     modId="tconstruct"
     mandatory=true
     versionRange="[3.3.3.332,)"
