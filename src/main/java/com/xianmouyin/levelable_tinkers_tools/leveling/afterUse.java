@@ -60,6 +60,6 @@ public class afterUse {
 
     public static MutableComponent getLevelUpMsg(ItemStack stack, int lvl) {
         Component name = stack.getItem().getName(stack);
-        return new TranslatableComponent("msg.tinker_tool_leveling.leverUp.1").append(name).append(new TranslatableComponent("msg.tinker_tool_leveling.leverUp.2").append(lvl + "").append(new TranslatableComponent("msg.tinker_tool_leveling.leverUp.3")));
+        return new TranslatableComponent("msg.levelable_tinkers_tools.leverUp.1").append(name).append(new TranslatableComponent("msg.levelable_tinkers_tools.leverUp.2").append(lvl + "").append(new TranslatableComponent("msg.levelable_tinkers_tools.leverUp.3")));
     }
 }

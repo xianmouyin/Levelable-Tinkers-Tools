@@ -1,13 +1,18 @@
 package com.xianmouyin.levelable_tinkers_tools.leveling;
 
-import com.xianmouyin.levelable_tinkers_tools.modifier.ModifierProvider;
+import com.xianmouyin.levelable_tinkers_tools.modifier.ModifierRegister;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.BaseFireBlock;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -20,15 +25,19 @@ import slimeknights.tconstruct.library.tools.nbt.ModifierNBT;
 import slimeknights.tconstruct.library.tools.nbt.ToolStack;
 import slimeknights.tconstruct.tools.item.ModifiableSwordItem;
 
+import java.util.List;
+
 import static com.xianmouyin.levelable_tinkers_tools.leveling.afterUse.addExp;
+import static com.xianmouyin.levelable_tinkers_tools.nbt.levelNBT.getNBT;
+import static com.xianmouyin.levelable_tinkers_tools.nbt.levelNBT.hasNBT;
 
 @Mod.EventBusSubscriber()
 public class eventHandler {
     @SubscribeEvent
     public static void OnToolUse(BlockEvent.BreakEvent event) {
         ItemStack tool = event.getPlayer().getMainHandItem();
-        if (tool.getItem() instanceof ModifiableItem && ToolStack.from(tool).getModifierLevel(ModifierProvider.levelable.getId()) <= 0) {
-            ToolStack.from(tool).addModifier(ModifierProvider.levelable.getId(),1);
+        if (tool.getItem() instanceof ModifiableItem && ToolStack.from(tool).getModifierLevel(ModifierRegister.levelable.getId()) <= 0) {
+            ToolStack.from(tool).addModifier(ModifierRegister.levelable.getId(),1);
         }
     }
 
@@ -95,8 +104,28 @@ public class eventHandler {
     @SubscribeEvent
     public static void OnElytraGlide(TickEvent.PlayerTickEvent event) {
         ItemStack elytra = event.player.getItemBySlot(EquipmentSlot.CHEST);
-        if (event.player.isFallFlying() && elytra.getItem() instanceof ModifiableArmorItem && ToolStack.from(elytra).getModifierLevel(ModifierProvider.levelable.getId()) <= 0) {
-            ToolStack.from(elytra).addModifier(ModifierProvider.levelable.getId(), 1);
+        if (event.player.isFallFlying() && elytra.getItem() instanceof ModifiableArmorItem && ToolStack.from(elytra).getModifierLevel(ModifierRegister.levelable.getId()) <= 0) {
+            ToolStack.from(elytra).addModifier(ModifierRegister.levelable.getId(), 1);
+        }
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    @SubscribeEvent
+    public static void RenderLore(ItemTooltipEvent event) {
+        if(event.getItemStack().hasTag()){
+            ItemStack stack = event.getItemStack();
+            if (hasNBT(stack)) {
+                if (ToolStack.from(stack).getModifiers().getLevel(ModifierRegister.levelable.getId()) <= 0) {
+                    ToolStack.from(stack).addModifier(ModifierRegister.levelable.getId(), 1);
+                }
+                int exp = getNBT(stack,"experience");
+                int lvl = getNBT(stack,"level");
+                int expCap = getNBT(stack,"expCap");
+
+                List<Component> lore = event.getToolTip();
+                lore.add(new TranslatableComponent("tooltip.levelable_tinkers_tools.exp").append(exp + "/" + expCap));
+                lore.add(new TranslatableComponent("tooltip.levelable_tinkers_tools.lvl").append(lvl + ""));
+            }
         }
     }
 }

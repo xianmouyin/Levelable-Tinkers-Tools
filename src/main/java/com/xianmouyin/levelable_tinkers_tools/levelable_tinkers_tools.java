@@ -1,7 +1,7 @@
 package com.xianmouyin.levelable_tinkers_tools;
 
 import com.xianmouyin.levelable_tinkers_tools.config.Config;
-import com.xianmouyin.levelable_tinkers_tools.modifier.ModifierProvider;
+import com.xianmouyin.levelable_tinkers_tools.modifier.ModifierRegister;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -16,6 +16,6 @@ public class levelable_tinkers_tools {
 
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        ModifierProvider.MODIFIERS.register(bus);
+        ModifierRegister.MODIFIERS.register(bus);
     }
 }
