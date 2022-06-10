@@ -10,9 +10,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -24,6 +28,7 @@ import slimeknights.tconstruct.library.tools.nbt.ToolStack;
 import slimeknights.tconstruct.tools.item.small.SwordTool;
 
 import java.util.Iterator;
+import java.util.List;
 
 import static com.xianmouyin.levelable_tinkers_tools.leveling.afterUse.addExp;
 
@@ -113,6 +118,27 @@ public class onUse {
         ItemStack elytra = event.player.getItemStackFromSlot(EquipmentSlotType.CHEST);
         if (event.player.isElytraFlying() && elytra.getItem() instanceof ModifiableArmorItem && ToolStack.from(elytra).getModifiers().getLevel(ModifierProvider.levelable.get()) <= 0) {
             ToolStack.from(elytra).addModifier(ModifierProvider.levelable.get(),1);
+        }
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    @SubscribeEvent
+    public static void RenderLore(ItemTooltipEvent event) {
+        if(event.getItemStack().hasTag()){
+            CompoundNBT nbt = event.getItemStack().getTag();
+            if (nbt.keySet().contains("experience") && nbt.keySet().contains("level") && nbt.keySet().contains("expCap")) {
+                if (ToolStack.from(event.getItemStack()).getModifiers().getLevel(ModifierProvider.levelable.get()) <= 0) {
+                    ToolStack.from(event.getItemStack()).addModifier(ModifierProvider.levelable.get(),1);
+                }
+                Integer exp = nbt.getInt("experience");
+                Integer lvl = nbt.getInt("level");
+                int expCap = nbt.getInt("expCap");
+
+                List lore = event.getToolTip();
+
+                lore.add(new TranslationTextComponent("tooltip.levelable_tinkers_tools.exp").appendString(exp + "/" + expCap));
+                lore.add(new TranslationTextComponent("tooltip.levelable_tinkers_tools.lvl").appendString(lvl + ""));
+            }
         }
     }
 }

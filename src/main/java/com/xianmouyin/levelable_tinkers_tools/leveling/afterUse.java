@@ -58,6 +58,6 @@ public class afterUse {
 
     public static ITextComponent getLevelUpMsg(ItemStack stack, int lvl) {
         String name = stack.getDisplayName().getString();
-        return new TranslationTextComponent("msg.tinker_tool_leveling.leverUp.1").appendString(name).appendSibling(new TranslationTextComponent("msg.tinker_tool_leveling.leverUp.2").appendString(lvl + "").appendSibling(new TranslationTextComponent("msg.tinker_tool_leveling.leverUp.3")));
+        return new TranslationTextComponent("msg.levelable_tinkers_tools.leverUp.1").appendString(name).appendSibling(new TranslationTextComponent("msg.levelable_tinkers_tools.leverUp.2").appendString(lvl + "").appendSibling(new TranslationTextComponent("msg.levelable_tinkers_tools.leverUp.3")));
     }
 }
